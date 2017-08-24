@@ -15,16 +15,20 @@ public class ClientFactory {
     private final String SECRET_KEY = "secret.key";
     private final String CONN_TIMEOUT = "conn.timeout";
     private final String SOCKET_TIMEOUT = "socket.timeout";
+    private AipNlp client;
 
-    public AipNlp buildClient() {
+    public ClientFactory() {
         String appid = PropertiesUtil.getString(APP_ID);
         String aipKey = PropertiesUtil.getString(API_KEY);
         String secretKey = PropertiesUtil.getString(SECRET_KEY);
         int connTimeout = PropertiesUtil.getInt(CONN_TIMEOUT, 3000);
         int socketTimeout = PropertiesUtil.getInt(SOCKET_TIMEOUT, 60000);
-        AipNlp aipNlp = new AipNlp(appid, aipKey, secretKey);
-        aipNlp.setConnectionTimeoutInMillis(connTimeout);
-        aipNlp.setSocketTimeoutInMillis(socketTimeout);
-        return aipNlp;
+        this.client = new AipNlp(appid, aipKey, secretKey);
+        this.client.setConnectionTimeoutInMillis(connTimeout);
+        this.client.setSocketTimeoutInMillis(socketTimeout);
+    }
+
+    public AipNlp buildClient() {
+        return client;
     }
 }
