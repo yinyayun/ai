@@ -35,4 +35,8 @@ public class TaskQueue {
             throw new RuntimeException(e);
         }
     }
+
+    public boolean isEmpty() {
+        return taskQueue.isEmpty();
+    }
 }

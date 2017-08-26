@@ -38,4 +38,8 @@ public class TaskExecutor {
             }
         }
     }
+
+    public void shutDown() {
+        executorService.shutdown();
+    }
 }
