@@ -28,11 +28,6 @@
 			<systemPath>${basedir}/lib/nlp_sdk-1.5.2.jar</systemPath>
 		</dependency>
 		<dependency>
-			<groupId>org.json</groupId>
-			<artifactId>json</artifactId>
-			<version>20160810</version>
-		</dependency>
-		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>2.5</version>

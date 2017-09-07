@@ -22,8 +22,8 @@ import com.csvreader.CsvReader;
  */
 public class CsvFileTransformer {
     private String file;
-    private SaveAction saveAction;
-    private Map<String, PredecodeAction> fieldPredecode;
+    private SaveAction<List<String>> saveAction;
+    private Map<Integer, PredecodeAction> fieldPredecode;
     private String encode;
     private char delimiter;
 
@@ -32,7 +32,8 @@ public class CsvFileTransformer {
      * @param fieldPredecode 每个字段上的处理
      * @param saveAction 转换后如何保存
      */
-    public CsvFileTransformer(String file, Map<String, PredecodeAction> fieldPredecode, SaveAction saveAction) {
+    public CsvFileTransformer(String file, Map<Integer, PredecodeAction> fieldPredecode,
+            SaveAction<List<String>> saveAction) {
         this(file, fieldPredecode, saveAction, ',', "gbk");
     }
 
@@ -41,8 +42,8 @@ public class CsvFileTransformer {
      * @param fieldPredecode 每个字段上的处理
      * @param saveAction 转换后如何保存
      */
-    public CsvFileTransformer(String file, Map<String, PredecodeAction> fieldPredecode, SaveAction saveAction,
-            char delimiter, String encode) {
+    public CsvFileTransformer(String file, Map<Integer, PredecodeAction> fieldPredecode,
+            SaveAction<List<String>> saveAction, char delimiter, String encode) {
         this.file = file;
         this.saveAction = saveAction;
         this.fieldPredecode = fieldPredecode;
@@ -57,12 +58,16 @@ public class CsvFileTransformer {
             csvReader.readHeaders();
             while (csvReader.readRecord()) {
                 List<String> contents = new ArrayList<String>();
-                for (Entry<String, PredecodeAction> entry : fieldPredecode.entrySet()) {
+                for (Entry<Integer, PredecodeAction> entry : fieldPredecode.entrySet()) {
                     String content = csvReader.get(entry.getKey());
                     String preDecode = entry.getValue().predecode(content);
-                    contents.add(preDecode);
+                    if (preDecode.length() > 0) {
+                        contents.add(preDecode);
+                    }
                 }
-                saveAction.save(contents);
+                if (contents.size() > 0) {
+                    saveAction.save(contents);
+                }
             }
         }
         finally {
