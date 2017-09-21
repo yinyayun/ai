@@ -9,6 +9,7 @@
 	<modules>
 		<module>ai-baidu</module>
 		<module>ai-utils</module>
+		<module>ai-nlp</module>
 	</modules>
 	<dependencies>
 		<dependency>

@@ -81,8 +81,8 @@ public class NlpLexicalExecutor {
     }
 
     public void executorFromTxt() throws IOException {
-        String filePath = "C:/Users/yinyayun/Desktop/xyz咨询数据/清洗/xyz-corpus-20170829.txt";
-        String lexicalFilePath = "C:/Users/yinyayun/Desktop/xyz咨询数据/词法分析/lexical-20170829.txt";
+        String filePath = "C:/Users/yinyayun/Desktop/xyz咨询数据/清洗数据/xyz-corpus.txt";
+        String lexicalFilePath = "C:/Users/yinyayun/Desktop/xyz咨询数据/词法分析/lexical-json.txt";
         String completeFilePath = "C:/Users/yinyayun/Desktop/xyz咨询数据/词法分析/complete.txt";
         int threadSize = 3;
         //

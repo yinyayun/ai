@@ -26,20 +26,20 @@ import org.yinyayun.ai.utils.iface.SaveAction;
  *
  * @author yinyayun
  */
-public class Transformer {
+public class CsvTransformerText {
     public final Set<String> ss = new HashSet<String>(
             Arrays.asList(new String[]{"。", ".", "，", ",", "？", "?", "!", "！", ";", "；", ":", "："}));
 
     @Test
     public void transfomer1() throws IOException {
         // "C:/Users/yinyayun/Desktop/xyz咨询数据/wenda2.csv";
-        String[] files = {"C:/Users/yinyayun/Desktop/xyz咨询数据/wenda1.csv",
-                "C:/Users/yinyayun/Desktop/xyz咨询数据/wenda2.csv"};
+        String[] files = {"C:/Users/yinyayun/Desktop/xyz咨询数据/原始数据/wenda1.csv",
+                "C:/Users/yinyayun/Desktop/xyz咨询数据/原始数据/wenda2.csv"};
         // Predecode
         Map<Integer, PredecodeAction> fieldPredecodeActions = new LinkedHashMap<Integer, PredecodeAction>();
         fieldPredecodeActions.put(4, (x) -> parser(x));
         // saveAction
-        File saveFile = new File("C:/Users/yinyayun/Desktop/xyz咨询数据/清洗/xyz-corpus-20170829.txt");
+        File saveFile = new File("C:/Users/yinyayun/Desktop/xyz咨询数据/清洗数据/xyz-corpus.txt");
         FileUtils.deleteQuietly(saveFile);
         SaveAction<List<String>> saveAction = (x) -> saveAsTxt(x, saveFile);
         for (String file : files) {
