@@ -10,10 +10,10 @@ import com.baidu.aip.nlp.AipNlp;
  * @author yinyayun
  */
 public class BaiduNlpAnalysis {
-    private ClientFactory factory;
+    private AipNlp client;
 
-    public BaiduNlpAnalysis(ClientFactory factory) {
-        this.factory = factory;
+    public BaiduNlpAnalysis() {
+        this.client = ClientFactory.clientFactoryInstance().buildClient();
     }
 
     public String lexical(String text) {
@@ -28,7 +28,6 @@ public class BaiduNlpAnalysis {
      * @return null:如果无数据返回，或者调用出错
      */
     public String lexical(String text, int retryTimes) {
-        AipNlp client = factory.buildClient();
         for (int i = 0; i < retryTimes; i++) {
             JSONObject object = client.lexer(text);
             if (object.has("error_code")) {
@@ -53,7 +52,6 @@ public class BaiduNlpAnalysis {
      * @return
      */
     public String sentenceParser(String text, int retryTimes) {
-        AipNlp client = factory.buildClient();
         for (int i = 0; i < retryTimes; i++) {
             JSONObject object = client.depParser(text, null);
             if (object.has("error_code")) {

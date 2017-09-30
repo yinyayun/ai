@@ -28,6 +28,12 @@
 			<systemPath>${basedir}/lib/nlp_sdk-1.5.2.jar</systemPath>
 		</dependency>
 		<dependency>
+			<groupId>org.yinyayun</groupId>
+			<artifactId>netcarry-core</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+			<systemPath>${basedir}/lib/netcarry-core-0.0.1-SNAPSHOT.jar</systemPath>
+		</dependency>
+		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 			<version>2.5</version>
