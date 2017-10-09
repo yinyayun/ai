@@ -1,12 +1,19 @@
 
 package org.yinyayun.ai.baidu;
 
+import java.util.List;
+
+import org.yinyayun.ai.baidu.api.BaiduNlpSDK;
+import org.yinyayun.ai.baidu.utils.AppConfig;
+import org.yinyayun.ai.baidu.utils.PropertiesUtil;
+
 /**
  * @author yinyayun
  */
 public class BaiduNlpAnalysisTest {
     public static void main(String[] args) {
-        BaiduNlpAnalysis lexicalAnalysis = new BaiduNlpAnalysis(new ClientFactory());
+        List<AppConfig> configs = PropertiesUtil.allAppConfigs();
+        BaiduNlpSDK lexicalAnalysis = new BaiduNlpSDK(configs.get(0));
         try {
             String response = lexicalAnalysis.lexical("新一站保险网是新一站保险代理有限公司所有并运营的在线保险服务网站.");
             System.out.println(response);

@@ -7,7 +7,8 @@ import java.util.Set;
 import java.util.function.BiFunction;
 
 import org.apache.commons.lang.StringUtils;
-import org.yinyayun.ai.baidu.BaiduNlpAnalysis;
+import org.yinyayun.ai.baidu.api.BaiduApi;
+import org.yinyayun.ai.baidu.api.BaiduNlpSDK;
 import org.yinyayun.ai.utils.iface.SaveAction;
 
 /**
@@ -17,15 +18,15 @@ import org.yinyayun.ai.utils.iface.SaveAction;
  */
 public class TaskDetail implements Runnable {
     private TaskQueue queue;
-    private BaiduNlpAnalysis analysis;
-    private BiFunction<BaiduNlpAnalysis, String, String> process;
+    private BaiduApi api;
+    private BiFunction<BaiduApi, String, String> process;
     private SaveAction<TextEntity> saveAction;
     private Set<String> completeIds;
 
-    public TaskDetail(TaskQueue queue, BaiduNlpAnalysis analysis, BiFunction<BaiduNlpAnalysis, String, String> process,
+    public TaskDetail(TaskQueue queue, BaiduApi api, BiFunction<BaiduApi, String, String> process,
             SaveAction<TextEntity> saveAction, Set<String> completeIds) {
         this.queue = queue;
-        this.analysis = analysis;
+        this.api = api;
         this.process = process;
         this.saveAction = saveAction;
         this.completeIds = completeIds;
@@ -36,7 +37,7 @@ public class TaskDetail implements Runnable {
         while (true) {
             TextEntity textEntity = queue.take();
             if (!completeIds.contains(textEntity.getId()) && StringUtils.isNotEmpty(textEntity.getText())) {
-                String response = process.apply(analysis, textEntity.getText());
+                String response = process.apply(api, textEntity.getText());
                 if (response != null) {
                     textEntity.setResponse(response);
                     saveAction.save(textEntity);

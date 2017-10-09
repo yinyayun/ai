@@ -1,6 +1,7 @@
-package org.yinyayun.ai.baidu;
+package org.yinyayun.ai.baidu.api;
 
 import org.json.JSONObject;
+import org.yinyayun.ai.baidu.utils.AppConfig;
 
 import com.baidu.aip.nlp.AipNlp;
 
@@ -9,15 +10,13 @@ import com.baidu.aip.nlp.AipNlp;
  * 
  * @author yinyayun
  */
-public class BaiduNlpAnalysis {
+public class BaiduNlpSDK extends BaiduApi {
     private AipNlp client;
 
-    public BaiduNlpAnalysis() {
-        this.client = ClientFactory.clientFactoryInstance().buildClient();
-    }
-
-    public String lexical(String text) {
-        return lexical(text, 3);
+    public BaiduNlpSDK(AppConfig config) {
+        this.client = new AipNlp(config.appid, config.apiKey, config.secretKey);
+        client.setConnectionTimeoutInMillis(config.connTimeout);
+        client.setSocketTimeoutInMillis(config.socketTimeout);
     }
 
     /**
@@ -27,6 +26,7 @@ public class BaiduNlpAnalysis {
      * @param retryTimes
      * @return null:如果无数据返回，或者调用出错
      */
+    @Override
     public String lexical(String text, int retryTimes) {
         for (int i = 0; i < retryTimes; i++) {
             JSONObject object = client.lexer(text);
@@ -42,15 +42,12 @@ public class BaiduNlpAnalysis {
         return null;
     }
 
-    public String sentenceParser(String text) {
-        return sentenceParser(text, 3);
-    }
-
     /**
      * 句法分析接口
      * 
      * @return
      */
+    @Override
     public String sentenceParser(String text, int retryTimes) {
         for (int i = 0; i < retryTimes; i++) {
             JSONObject object = client.depParser(text, null);

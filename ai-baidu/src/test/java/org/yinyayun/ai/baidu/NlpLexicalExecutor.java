@@ -17,10 +17,14 @@ import java.util.function.BiFunction;
 import org.apache.commons.io.FileUtils;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.yinyayun.ai.baidu.api.BaiduApi;
+import org.yinyayun.ai.baidu.api.BaiduNlpSDK;
 import org.yinyayun.ai.baidu.task.TaskDetail;
 import org.yinyayun.ai.baidu.task.TaskExecutor;
 import org.yinyayun.ai.baidu.task.TaskQueue;
 import org.yinyayun.ai.baidu.task.TextEntity;
+import org.yinyayun.ai.baidu.utils.AppConfig;
+import org.yinyayun.ai.baidu.utils.PropertiesUtil;
 import org.yinyayun.ai.utils.iface.SaveAction;
 
 import com.csvreader.CsvReader;
@@ -181,14 +185,15 @@ public class NlpLexicalExecutor {
      * @param saveAction
      * @return
      */
-    private Runnable[] buildThreads(int threadSize, final TaskQueue queue,
-            BiFunction<BaiduNlpAnalysis, String, String> process, SaveAction<TextEntity> saveAction,
-            Set<String> completes) {
-        BaiduNlpAnalysis analysis = new BaiduNlpAnalysis(new ClientFactory());
+    private Runnable[] buildThreads(int threadSize, final TaskQueue queue, BiFunction<BaiduApi, String, String> process,
+            SaveAction<TextEntity> saveAction, Set<String> completes) {
+        List<AppConfig> configs = PropertiesUtil.allAppConfigs();
         Runnable[] runs = new Runnable[threadSize];
         for (int i = 0; i < runs.length; i++) {
-            runs[i] = new TaskDetail(queue, analysis, process, saveAction, completes);
+            BaiduApi api = new BaiduNlpSDK(configs.get(i % configs.size()));
+            runs[i] = new TaskDetail(queue, api, process, saveAction, completes);
         }
         return runs;
     }
+
 }
