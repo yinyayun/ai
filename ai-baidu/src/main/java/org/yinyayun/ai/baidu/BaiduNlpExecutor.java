@@ -10,6 +10,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.commons.io.FileUtils;
+import org.json.JSONObject;
 import org.yinyayun.ai.baidu.api.BaiduApi;
 import org.yinyayun.ai.baidu.task.TextEntity;
 import org.yinyayun.ai.baidu.utils.AppConfig;
@@ -18,7 +19,7 @@ import org.yinyayun.ai.utils.TxtFileReader;
 
 public abstract class BaiduNlpExecutor {
 
-	public void executor(String dataFile, String saveFile, String completeFile) {
+	public void executor(String dataFile, String saveFile, String completeFile, int threadSize) {
 		BlockingQueue<TextEntity> queue = new ArrayBlockingQueue<TextEntity>(1000);
 		BlockingQueue<TextEntity> saveQueue = new ArrayBlockingQueue<TextEntity>(1000);
 		TxtFileReader dataReader = null;
@@ -28,7 +29,7 @@ public abstract class BaiduNlpExecutor {
 			// 打开资源
 			dataReader = new TxtFileReader(dataFile);
 			// 启动跑数据线程
-			ExecutorService executorService = startCrawlerThread(queue, saveQueue, 5);
+			ExecutorService executorService = startCrawlerThread(queue, saveQueue, threadSize);
 			// 启动保存数据线程
 			startSaveThread(saveQueue, new File(saveFile), new File(completeFile));
 			int id = 0;
@@ -68,7 +69,7 @@ public abstract class BaiduNlpExecutor {
 			while (true) {
 				try {
 					TextEntity entity = saveQueue.take();
-					String json = entity.text;
+					String json = entity.response;
 					int id = entity.id;
 					FileUtils.write(saveFile, json.concat("\n"), "utf-8", true);
 					FileUtils.write(completeSaveFile, String.valueOf(id).concat("\n"), "utf-8", true);

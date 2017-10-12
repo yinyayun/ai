@@ -51,7 +51,7 @@ public class BaiduNlpHttp extends BaiduApi {
 			response = connection.requestBody(PARAMS.replace("${text}", text)).execute();
 			String json = new String(response.bodyAsBytes(), "GBK");
 			JSONObject jsonObject = new JSONObject(json);
-			if (jsonObject.has("error")) {
+			if (jsonObject.has("error_code")) {
 				return null;
 			} else {
 				return json;

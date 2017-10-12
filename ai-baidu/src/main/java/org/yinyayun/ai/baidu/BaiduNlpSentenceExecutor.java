@@ -16,7 +16,7 @@ public class BaiduNlpSentenceExecutor extends BaiduNlpExecutor {
 		String dataFile = "C:/Users/yinyayun/Desktop/xyz咨询数据/句子/corpus-sentences.txt";
 		String saveFile = "C:/Users/yinyayun/Desktop/xyz咨询数据/句子/corpus-sentences-json.txt";
 		String completeFile = "C:/Users/yinyayun/Desktop/xyz咨询数据/句子/completes.txt";
-		new BaiduNlpSentenceExecutor().executor(dataFile, saveFile, completeFile);
+		new BaiduNlpSentenceExecutor().executor(dataFile, saveFile, completeFile, 10);
 	}
 
 	@Override
