@@ -4,6 +4,8 @@ import org.yinyayun.ai.baidu.api.BaiduApi;
 import org.yinyayun.ai.baidu.api.BaiduNlpHttp;
 import org.yinyayun.ai.baidu.task.TextEntity;
 import org.yinyayun.ai.baidu.utils.AppConfig;
+import org.yinyayun.ai.utils.proxy.ProxyCrawler;
+import org.yinyayun.ai.utils.proxy.ProxyFactory;
 
 /**
  * 句法分析数据抓取
@@ -16,7 +18,8 @@ public class BaiduNlpSentenceExecutor extends BaiduNlpExecutor {
 		String dataFile = "C:/Users/yinyayun/Desktop/xyz咨询数据/句子/corpus-sentences.txt";
 		String saveFile = "C:/Users/yinyayun/Desktop/xyz咨询数据/句子/corpus-sentences-json.txt";
 		String completeFile = "C:/Users/yinyayun/Desktop/xyz咨询数据/句子/completes.txt";
-		new BaiduNlpSentenceExecutor().executor(dataFile, saveFile, completeFile, 10);
+		ProxyFactory proxyFactory = new ProxyFactory(new ProxyCrawler());
+		new BaiduNlpSentenceExecutor().executor(dataFile, saveFile, completeFile, 8, proxyFactory);
 	}
 
 	@Override
@@ -25,8 +28,8 @@ public class BaiduNlpSentenceExecutor extends BaiduNlpExecutor {
 	}
 
 	@Override
-	public BaiduApi buildApi(AppConfig config) {
-		return new BaiduNlpHttp(config);
+	public BaiduApi buildApi(AppConfig config, ProxyFactory proxyFactory) {
+		return new BaiduNlpHttp(config, proxyFactory, false);
 	}
 
 }

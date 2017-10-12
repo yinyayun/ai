@@ -3,21 +3,31 @@
  */
 package org.yinyayun.ai.baidu.api;
 
+import org.yinyayun.ai.utils.proxy.ProxyFactory;
+
 /**
  * BaiduApi.java
  *
  * @author yinyayun
  */
 public abstract class BaiduApi {
-    public abstract String lexical(String text, int retryTimes);
+	protected ProxyFactory proxyFactory;
+	protected boolean debug;
 
-    public String lexical(String text) {
-        return lexical(text, 3);
-    }
+	public BaiduApi(ProxyFactory proxyFactory, boolean debug) {
+		this.proxyFactory = proxyFactory;
+		this.debug = debug;
+	}
 
-    public abstract String sentenceParser(String text, int retryTimes);
+	public abstract String lexical(String text, int retryTimes);
 
-    public String sentenceParser(String text) {
-        return sentenceParser(text, 3);
-    }
+	public String lexical(String text) {
+		return lexical(text, 1);
+	}
+
+	public abstract String sentenceParser(String text, int retryTimes);
+
+	public String sentenceParser(String text) {
+		return sentenceParser(text, 1);
+	}
 }

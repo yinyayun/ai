@@ -10,16 +10,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.commons.io.FileUtils;
-import org.json.JSONObject;
 import org.yinyayun.ai.baidu.api.BaiduApi;
 import org.yinyayun.ai.baidu.task.TextEntity;
 import org.yinyayun.ai.baidu.utils.AppConfig;
 import org.yinyayun.ai.baidu.utils.PropertiesUtil;
 import org.yinyayun.ai.utils.TxtFileReader;
+import org.yinyayun.ai.utils.proxy.ProxyFactory;
 
 public abstract class BaiduNlpExecutor {
 
-	public void executor(String dataFile, String saveFile, String completeFile, int threadSize) {
+	public void executor(String dataFile, String saveFile, String completeFile, int threadSize, ProxyFactory factory) {
 		BlockingQueue<TextEntity> queue = new ArrayBlockingQueue<TextEntity>(1000);
 		BlockingQueue<TextEntity> saveQueue = new ArrayBlockingQueue<TextEntity>(1000);
 		TxtFileReader dataReader = null;
@@ -29,7 +29,7 @@ public abstract class BaiduNlpExecutor {
 			// 打开资源
 			dataReader = new TxtFileReader(dataFile);
 			// 启动跑数据线程
-			ExecutorService executorService = startCrawlerThread(queue, saveQueue, threadSize);
+			ExecutorService executorService = startCrawlerThread(queue, saveQueue, threadSize, factory);
 			// 启动保存数据线程
 			startSaveThread(saveQueue, new File(saveFile), new File(completeFile));
 			int id = 0;
@@ -91,14 +91,14 @@ public abstract class BaiduNlpExecutor {
 	 * @return
 	 */
 	public ExecutorService startCrawlerThread(BlockingQueue<TextEntity> queue, BlockingQueue<TextEntity> saveQueue,
-			int threadSize) {
+			int threadSize, ProxyFactory factory) {
 		List<AppConfig> configs = PropertiesUtil.allAppConfigs();
 		ExecutorService service = Executors.newFixedThreadPool(15);
 		for (int i = 0; i < threadSize; i++) {
 			final int threadid = i;
 			service.submit(() -> {
 				int threadCommitCount = 0;
-				BaiduApi api = buildApi(configs.get(threadid % configs.size()));
+				BaiduApi api = buildApi(configs.get(threadid % configs.size()), factory);
 				while (true) {
 					try {
 						TextEntity entity = queue.take();
@@ -112,7 +112,7 @@ public abstract class BaiduNlpExecutor {
 							}
 							entity.setResponse(json);
 							saveQueue.put(entity);
-							Thread.sleep(50 + threadid);
+							Thread.sleep(10 + threadid);
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -144,7 +144,7 @@ public abstract class BaiduNlpExecutor {
 
 	public abstract String doAction(TextEntity entity, BaiduApi api);
 
-	public abstract BaiduApi buildApi(AppConfig config);
+	public abstract BaiduApi buildApi(AppConfig config, ProxyFactory factory);
 
 	/**
 	 * 判断是否符合执行的条件,如在句法分析时，句子长度不能超出256

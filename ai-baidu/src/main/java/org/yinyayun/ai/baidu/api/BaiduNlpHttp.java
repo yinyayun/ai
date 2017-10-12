@@ -12,6 +12,8 @@ import org.jsoup.Connection.Response;
 import org.jsoup.helper.HttpConnection;
 import org.jsoup.nodes.Document;
 import org.yinyayun.ai.baidu.utils.AppConfig;
+import org.yinyayun.ai.utils.proxy.ProxyEntity;
+import org.yinyayun.ai.utils.proxy.ProxyFactory;
 
 /**
  * BaiduAiHttpAPI.java 封装HTTP调用方式
@@ -25,11 +27,17 @@ public class BaiduNlpHttp extends BaiduApi {
 	private String url;
 	private Connection connection;
 
-	public BaiduNlpHttp(AppConfig config) {
+	public BaiduNlpHttp(AppConfig config, ProxyFactory proxyFactory) {
+		this(config, proxyFactory, false);
+	}
+
+	public BaiduNlpHttp(AppConfig config, ProxyFactory proxyFactory, boolean debug) {
+		super(proxyFactory, debug);
 		try {
 			this.url = URL + accessToken(config.apiKey, config.secretKey);
 			this.connection = HttpConnection.connect(url).ignoreContentType(true).timeout(10000).postDataCharset("GBK")
 					.header("Content-Type", "application/json").method(Method.POST);
+			proxy();
 		} catch (IOException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
@@ -46,19 +54,24 @@ public class BaiduNlpHttp extends BaiduApi {
 	 */
 	@Override
 	public String sentenceParser(String text, int retryTime) {
-		Response response;
-		try {
-			response = connection.requestBody(PARAMS.replace("${text}", text)).execute();
-			String json = new String(response.bodyAsBytes(), "GBK");
-			JSONObject jsonObject = new JSONObject(json);
-			if (jsonObject.has("error_code")) {
-				return null;
-			} else {
-				return json;
+		for (int i = 0; i < retryTime; i++) {
+			try {
+				Response response = connection.requestBody(PARAMS.replace("${text}", text)).execute();
+				String json = new String(response.bodyAsBytes(), "GBK");
+				JSONObject jsonObject = new JSONObject(json);
+				if (jsonObject.has("error_code")) {
+					if (debug && i == retryTime - 1)
+						System.err.println("error parser:" + text);
+					continue;
+				} else {
+					return json;
+				}
+			} catch (IOException e) {
+				proxy();
+				throw new RuntimeException(e.getMessage(), e);
 			}
-		} catch (IOException e) {
-			throw new RuntimeException(e.getMessage(), e);
 		}
+		return null;
 	}
 
 	@Override
@@ -84,6 +97,15 @@ public class BaiduNlpHttp extends BaiduApi {
 		} else {
 			System.out.println(jsonObject.getString("access_token"));
 			return jsonObject.getString("access_token");
+		}
+	}
+
+	public void proxy() {
+		if (proxyFactory != null) {
+			ProxyEntity proxyEntity = proxyFactory.take();
+			if (proxyEntity != null) {
+				connection.proxy(proxyEntity.ip, proxyEntity.port);
+			}
 		}
 	}
 
