@@ -26,6 +26,7 @@ public class BaiduNlpHttp extends BaiduApi {
 	private final static String PARAMS = "{\"text\":\"${text}\"}";
 	private String url;
 	private Connection connection;
+	private ProxyEntity proxyEntity;
 
 	public BaiduNlpHttp(AppConfig config, ProxyFactory proxyFactory) {
 		this(config, proxyFactory, false);
@@ -37,7 +38,7 @@ public class BaiduNlpHttp extends BaiduApi {
 			this.url = URL + accessToken(config.apiKey, config.secretKey);
 			this.connection = HttpConnection.connect(url).ignoreContentType(true).timeout(10000).postDataCharset("GBK")
 					.header("Content-Type", "application/json").method(Method.POST);
-			proxy();
+			takeAndSetProxy();
 		} catch (IOException e) {
 			throw new RuntimeException(e.getMessage(), e);
 		}
@@ -67,7 +68,7 @@ public class BaiduNlpHttp extends BaiduApi {
 					return json;
 				}
 			} catch (IOException e) {
-				proxy();
+				takeAndSetProxy();
 				throw new RuntimeException(e.getMessage(), e);
 			}
 		}
@@ -100,8 +101,12 @@ public class BaiduNlpHttp extends BaiduApi {
 		}
 	}
 
-	public void proxy() {
+	public void takeAndSetProxy() {
 		if (proxyFactory != null) {
+			// 注销
+			if (proxyEntity != null) {
+				proxyFactory.recycle(proxyEntity);
+			}
 			ProxyEntity proxyEntity = proxyFactory.take();
 			if (proxyEntity != null) {
 				connection.proxy(proxyEntity.ip, proxyEntity.port);

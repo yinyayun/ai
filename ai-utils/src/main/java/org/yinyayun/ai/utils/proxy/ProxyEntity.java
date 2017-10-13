@@ -5,6 +5,7 @@ public class ProxyEntity {
 	public int port;
 	public String user;
 	public String passwd;
+	public int failureTimes = 0;
 
 	public ProxyEntity(String ip, int port) {
 		this.ip = ip;
@@ -21,5 +22,12 @@ public class ProxyEntity {
 	@Override
 	public String toString() {
 		return String.join(":", ip, String.valueOf(port));
+	}
+
+	public boolean equal(ProxyEntity proxyEntity) {
+		if (proxyEntity.ip.equals(this.ip) && proxyEntity.port == this.port) {
+			return true;
+		}
+		return false;
 	}
 }
