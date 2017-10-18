@@ -19,29 +19,42 @@ import org.yinyayun.ai.utils.proxy.ProxyFactory;
 
 public abstract class BaiduNlpExecutor {
 
-	public void executor(String dataFile, String saveFile, String completeFile, int threadSize, ProxyFactory factory) {
+	public void executor(int repeatSize, String dataFile, String saveFile, String completeFile, int threadSize,
+			ProxyFactory factory) {
 		BlockingQueue<TextEntity> queue = new ArrayBlockingQueue<TextEntity>(1000);
 		BlockingQueue<TextEntity> saveQueue = new ArrayBlockingQueue<TextEntity>(1000);
 		TxtFileReader dataReader = null;
-		try {
-			// 加载已经完成
-			Set<Integer> completes = loadCompletes(completeFile);
-			// 打开资源
-			dataReader = new TxtFileReader(dataFile);
-			// 启动跑数据线程
-			ExecutorService executorService = startCrawlerThread(queue, saveQueue, threadSize, factory);
-			// 启动保存数据线程
-			startSaveThread(saveQueue, new File(saveFile), new File(completeFile));
-			int id = 0;
-			while (dataReader.hasNext()) {
-				TextEntity entity = new TextEntity(++id, dataReader.readLine());
-				if (!completes.contains(entity.id)) {
-					queue.put(entity);
+		// 启动跑数据线程
+		ExecutorService executorService = startCrawlerThread(queue, saveQueue, threadSize, factory);
+		// 启动保存数据线程
+		startSaveThread(saveQueue, new File(saveFile), new File(completeFile));
+		for (int i = 0; i < repeatSize; i++) {
+			try {
+				int id = 0;
+				// 加载已经完成
+				Set<Integer> completes = loadCompletes(completeFile);
+				// 打开资源
+				dataReader = new TxtFileReader(dataFile);
+				while (dataReader.hasNext()) {
+					TextEntity entity = new TextEntity(++id, dataReader.readLine());
+					if (!completes.contains(entity.id)) {
+						queue.put(entity);
+					}
+					if (id % 1000 == 0) {
+						System.out.println("read complete " + id);
+					}
 				}
-				if (id % 1000 == 0) {
-					System.out.println("read complete " + id);
-				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				close(dataReader);
 			}
+		}
+		exist(saveQueue, executorService);
+	}
+
+	private void exist(BlockingQueue<TextEntity> queue, ExecutorService executorService) {
+		try {
 			System.out.println("读结束...");
 			while (queue.size() > 0) {
 				Thread.sleep(5000);
@@ -52,8 +65,6 @@ public abstract class BaiduNlpExecutor {
 			System.exit(0);
 		} catch (Exception e) {
 			e.printStackTrace();
-		} finally {
-			close(dataReader);
 		}
 	}
 
