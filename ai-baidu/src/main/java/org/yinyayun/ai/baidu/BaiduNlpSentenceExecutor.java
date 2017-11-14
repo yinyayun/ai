@@ -18,8 +18,8 @@ public class BaiduNlpSentenceExecutor extends BaiduNlpExecutor {
 		String dataFile = "C:/Users/yinyayun/Desktop/xyz咨询数据/句子/corpus-sentences.txt";
 		String saveFile = "C:/Users/yinyayun/Desktop/xyz咨询数据/句子/corpus-sentences-json.txt";
 		String completeFile = "C:/Users/yinyayun/Desktop/xyz咨询数据/句子/completes.txt";
-		ProxyFactory proxyFactory = new ProxyFactory(new ProxyCrawler());
-		new BaiduNlpSentenceExecutor().executor(5, dataFile, saveFile, completeFile, 10, proxyFactory);
+		// ProxyFactory proxyFactory = new ProxyFactory(new ProxyCrawler());
+		new BaiduNlpSentenceExecutor().executor(2, dataFile, saveFile, completeFile, 1, null);
 	}
 
 	@Override
