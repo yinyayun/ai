@@ -4,7 +4,6 @@ import org.yinyayun.ai.baidu.api.BaiduApi;
 import org.yinyayun.ai.baidu.api.BaiduNlpHttp;
 import org.yinyayun.ai.baidu.task.TextEntity;
 import org.yinyayun.ai.baidu.utils.AppConfig;
-import org.yinyayun.ai.utils.proxy.ProxyCrawler;
 import org.yinyayun.ai.utils.proxy.ProxyFactory;
 
 /**
@@ -15,9 +14,9 @@ import org.yinyayun.ai.utils.proxy.ProxyFactory;
  */
 public class BaiduNlpSentenceExecutor extends BaiduNlpExecutor {
 	public static void main(String[] args) {
-		String dataFile = "C:/Users/yinyayun/Desktop/xyz咨询数据/句子/corpus-sentences.txt";
-		String saveFile = "C:/Users/yinyayun/Desktop/xyz咨询数据/句子/corpus-sentences-json.txt";
-		String completeFile = "C:/Users/yinyayun/Desktop/xyz咨询数据/句子/completes.txt";
+		String dataFile = "D:/Data/xyz咨询数据/句子/corpus-sentences.txt";
+		String saveFile = "D:/Data/xyz咨询数据/句子/corpus-sentences-json.txt";
+		String completeFile = "D:/Data/xyz咨询数据/句子/completes.txt";
 		// ProxyFactory proxyFactory = new ProxyFactory(new ProxyCrawler());
 		new BaiduNlpSentenceExecutor().executor(2, dataFile, saveFile, completeFile, 1, null);
 	}

@@ -15,7 +15,7 @@ public class BaiduNlpAnalysisTest {
 		List<AppConfig> configs = PropertiesUtil.allAppConfigs();
 		BaiduNlpSDK lexicalAnalysis = new BaiduNlpSDK(configs.get(0), null);
 		try {
-			String response = lexicalAnalysis.lexical("新一站保险网是新一站保险代理有限公司所有并运营的在线保险服务网站.");
+			String response = lexicalAnalysis.sentenceParser("怎样用身份证查询保单？");
 			System.out.println(response);
 		} catch (Exception e) {
 			e.printStackTrace();
